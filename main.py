@@ -77,9 +77,6 @@ def processar_mapa_fogo_agrupado(mapa_fogo, tamanho):
                 coordenadas_str
             )
 
-    # Opcional: Remover chaves onde 'intensidades_originais' está vazio (se você usou o 'continue' para 0.0)
-    # agrupamento_fogo_limpo = {k: v for k, v in agrupamento_fogo.items() if v['intensidades_originais']}
-    # return agrupamento_fogo_limpo
     return agrupamento_fogo
 
 
