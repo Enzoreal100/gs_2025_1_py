@@ -3,17 +3,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def gerar_mapa(tamanho):
-    return [[random.randint(10, 100) for _ in range(tamanho)] for _ in range(tamanho)]
+# def gerar_mapa(tamanho):
+#     # Gera um mapa de densidade (valores de 10 a 100, para a "densidade original" da floresta)
+#     return [[random.randint(10, 100) for _ in range(tamanho)] for _ in range(tamanho)]
 
 
 def propagar_fogo_por_distancia(linha_inicial, col_inicial, tamanho):
+    # Gera o mapa de intensidade de fogo (valores de 0.0 a 1.0)
     mapa_fogo = [[0.0 for _ in range(tamanho)] for _ in range(tamanho)]
     for i in range(tamanho):
         for j in range(tamanho):
             distancia = abs(i - linha_inicial) + abs(j - col_inicial)
 
-            intensidade_base = 1.0 - 0.15 * distancia
+            intensidade_base = 1.0 - 0.05 * distancia
 
             intensidade_final = 0.0
 
@@ -50,55 +52,53 @@ def mostrar_matriz(matriz):
         print(" ".join(f"{v:.2f}" for v in linha))
 
 
-def processar_mapa_densidade_agrupado(mapa_densidade, tamanho):
-    agrupamento_densidade = {}
+def processar_mapa_fogo_agrupado(mapa_fogo, tamanho):
+    agrupamento_fogo = {}
 
     for linha in range(tamanho):
         for coluna in range(tamanho):
-            valor_densidade = mapa_densidade[linha][coluna]
+            valor_fogo = mapa_fogo[linha][coluna]
 
-            if valor_densidade == 0:
+            if valor_fogo < 0.1:
                 continue
-            else:
-                valor_decimal = valor_densidade / 100.0
 
-                chave_principal = f"{valor_decimal:.1f}"
+            # Calcula a chave principal com base no primeiro dígito decimal
+            chave_principal = f"{int(valor_fogo * 10) / 10:.1f}"
+            if valor_fogo == 1.0: # Para garantir que 1.0 seja agrupado corretamente como "1.0"
+                chave_principal = "1.0"
 
-                valor_fogo_formatado = f"{valor_decimal:.2f}"
+            coordenadas_str = f"{linha},{coluna}"
 
-                coordenadas_str = f"{linha},{coluna}"
+            if chave_principal not in agrupamento_fogo:
+                agrupamento_fogo[chave_principal] = {
+                    "intensidades_originais": [], # Renomeado para refletir o mapa de fogo
+                    "coordenadas": [],
+                }
 
-                if chave_principal not in agrupamento_densidade:
-                    agrupamento_densidade[chave_principal] = {
-                        "valores_fogo": [],
-                        "coordenadas": [],
-                    }
+            agrupamento_fogo[chave_principal]["intensidades_originais"].append(
+                valor_fogo
+            )
+            agrupamento_fogo[chave_principal]["coordenadas"].append(
+                coordenadas_str
+            )
 
-                agrupamento_densidade[chave_principal]["valores_fogo"].append(
-                    valor_fogo_formatado
-                )
-                agrupamento_densidade[chave_principal]["coordenadas"].append(
-                    coordenadas_str
-                )
-
-    return agrupamento_densidade
+    # Opcional: Remover chaves onde 'intensidades_originais' está vazio (se você usou o 'continue' para 0.0)
+    # agrupamento_fogo_limpo = {k: v for k, v in agrupamento_fogo.items() if v['intensidades_originais']}
+    # return agrupamento_fogo_limpo
+    return agrupamento_fogo
 
 
-def printa_dict2(dict):
-    for key in dict.keys():
-        print(f"{key}: {dict[key]}")
+
 
 
 def printa_dict(dict):
     for key in dict.keys():
-        print(f"{key}: {printa_dict2(dict[key])}")
+        print(f"{key}: \n"
+              f"    intensidades_originais: {dict[key]['intensidades_originais']}\n "
+              f"    coordenadas: {dict[key]['coordenadas']}\n")
 
 
-def simular():
-    tamanho = 10
-
-    mapa_densidade = gerar_mapa(tamanho)
-
+def simular(tamanho=10):
     print("[🔥] Simulação de propagação de fogo por distância iniciada.")
     try:
         linha = int(input(f"Digite a linha de origem do fogo (0 a {tamanho - 1}): "))
@@ -122,9 +122,9 @@ def simular():
     print("\n🖼️ Exibindo mapa de calor...")
     exibir_heatmap(mapa_fogo)
 
-    print("\n📦 Processando e exibindo o mapa de densidade agrupado:")
-    resultado_agrupado = processar_mapa_densidade_agrupado(mapa_densidade, tamanho)
-    printa_dict(resultado_agrupado)
+    print("\n📦 Processando e exibindo o mapa de intensidade do fogo agrupado:")
+    resultado_agrupado_fogo = processar_mapa_fogo_agrupado(mapa_fogo, tamanho)
+    print("Agrupamento de intensidades de fogo (valor aproximado: {intensidades originais, coordenadas}):")
+    return resultado_agrupado_fogo
 
-
-simular()
+resultados_simulacao = simular(15)
