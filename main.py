@@ -88,7 +88,7 @@ def printa_dict(dict):
 
 
 def menu():
-    msg = f'O que deseja fazer?\n \t1. mostrar o dano em todas as áreas afetadas\n \t2. mostrar o dano em uma área específica\n\n\n'
+    msg = f'O que deseja fazer?\n \t1. mostrar o dano em todas as áreas afetadas\n \t2. mostrar o dano em uma área específica\n \t 3. Sair\n\n\n'
     print(msg)
     resposta = input()
     while not resposta.isnumeric():
