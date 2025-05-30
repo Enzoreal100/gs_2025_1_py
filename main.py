@@ -3,11 +3,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-# def gerar_mapa(tamanho):
-#     # Gera um mapa de densidade (valores de 10 a 100, para a "densidade original" da floresta)
-#     return [[random.randint(10, 100) for _ in range(tamanho)] for _ in range(tamanho)]
-
-
 def propagar_fogo_por_distancia(linha_inicial, col_inicial, tamanho):
     # Gera o mapa de intensidade de fogo (valores de 0.0 a 1.0)
     mapa_fogo = [[0.0 for _ in range(tamanho)] for _ in range(tamanho)]
