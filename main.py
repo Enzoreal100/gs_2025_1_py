@@ -4,7 +4,7 @@ import seaborn as sns
 
 
 def propagar_fogo_por_distancia(linha_inicial, col_inicial, tamanho):
-    # Gera o mapa de intensidade de fogo (valores de 0.0 a 1.0)
+
     mapa_fogo = [[0.0 for _ in range(tamanho)] for _ in range(tamanho)]
     for i in range(tamanho):
         for j in range(tamanho):
