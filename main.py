@@ -80,14 +80,22 @@ def processar_mapa_fogo_agrupado(mapa_fogo, tamanho):
     return agrupamento_fogo
 
 
-
-
-
 def printa_dict(dict):
     for key in dict.keys():
         print(f"{key}: \n"
               f"    intensidades_originais: {dict[key]['intensidades_originais']}\n "
               f"    coordenadas: {dict[key]['coordenadas']}\n")
+
+
+def menu():
+    msg = f'O que deseja fazer?\n \t1. mostrar o dano em todas as áreas afetadas\n \t2. mostrar o dano em uma área específica\n\n\n'
+    print(msg)
+    resposta = input()
+    while not resposta.isnumeric():
+        print("Por favor, digite um valor válido.\n\n")
+        print(msg)
+        resposta = input()
+    return resposta
 
 
 def simular(tamanho=10):
@@ -120,3 +128,4 @@ def simular(tamanho=10):
     return resultado_agrupado_fogo
 
 resultados_simulacao = simular(15)
+answer = menu()
