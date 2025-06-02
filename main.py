@@ -10,7 +10,7 @@ def propagar_fogo_por_distancia(linha_inicial, col_inicial, tamanho):
         for j in range(tamanho):
             distancia = abs(i - linha_inicial) + abs(j - col_inicial)
 
-            intensidade_base = 1.0 - 0.05 * distancia
+            intensidade_base = 1.0 - 0.015 * distancia
 
             intensidade_final = 0.0
 
@@ -59,46 +59,63 @@ def processar_mapa_fogo_agrupado(mapa_fogo, tamanho):
 
             # Calcula a chave principal com base no primeiro dígito decimal
             chave_principal = f"{int(valor_fogo * 10) / 10:.1f}"
-            if valor_fogo == 1.0: # Para garantir que 1.0 seja agrupado corretamente como "1.0"
+            if (
+                valor_fogo == 1.0
+            ):  # Para garantir que 1.0 seja agrupado corretamente como "1.0"
                 chave_principal = "1.0"
 
             coordenadas_str = f"{linha},{coluna}"
 
             if chave_principal not in agrupamento_fogo:
                 agrupamento_fogo[chave_principal] = {
-                    "intensidades_originais": [], # Renomeado para refletir o mapa de fogo
+                    "intensidades_originais": [],  # Renomeado para refletir o mapa de fogo
                     "coordenadas": [],
                 }
 
             agrupamento_fogo[chave_principal]["intensidades_originais"].append(
                 valor_fogo
             )
-            agrupamento_fogo[chave_principal]["coordenadas"].append(
-                coordenadas_str
-            )
+            agrupamento_fogo[chave_principal]["coordenadas"].append(coordenadas_str)
 
     return agrupamento_fogo
 
 
 def printa_dict(dict):
     for key in dict.keys():
-        print(f"{key}: \n"
-              f"    intensidades_originais: {dict[key]['intensidades_originais']}\n "
-              f"    coordenadas: {dict[key]['coordenadas']}\n")
+        print(
+            f"{key}: \n"
+            f"    intensidades_originais: {dict[key]['intensidades_originais']}\n "
+            f"    coordenadas: {dict[key]['coordenadas']}\n"
+        )
 
 
 def menu():
-    msg = f'O que deseja fazer?\n \t1. mostrar o dano em todas as áreas afetadas\n \t2. mostrar o dano em uma área específica\n \t 3. Sair\n\n\n'
-    print(msg)
-    resposta = input()
+    msg = f"O que deseja fazer?\n\t1. mostrar o dano em todas as áreas afetadas\n\t2. mostrar o dano em uma área específica\n\t 3. Sair\n\n\n"
+    resposta = input(msg)
     while not resposta.isnumeric():
         print("Por favor, digite um valor válido.\n\n")
         print(msg)
         resposta = input()
-    return resposta
+    match resposta:
+        case "1":
+            print("\n📦 Resultados da simulação:")
+            printa_dict(resultados_simulacao)
+        case "2":
+            linha = float(input("Digite a linha que deseja consultar: "))
+            # coluna = int(input("Digite a coluna que deseja consultar: "))
+            chave = f"{resultados_simulacao[linha]:.1f}"
+            if chave in resultados_simulacao:
+                print(
+                    f"Intensidade do fogo na posição ({linha}): {resultados_simulacao[chave]['intensidades_originais']}"
+                )
+            else:
+                print("Nenhum dado encontrado para essa posição.")
+        case "3":
+            print("Saindo do programa. Até logo!")
+            exit()
 
 
-def simular(tamanho=10):
+def simular(tamanho=50):
     print("[🔥] Simulação de propagação de fogo por distância iniciada.")
     try:
         linha = int(input(f"Digite a linha de origem do fogo (0 a {tamanho - 1}): "))
@@ -124,8 +141,11 @@ def simular(tamanho=10):
 
     print("\n📦 Processando e exibindo o mapa de intensidade do fogo agrupado:")
     resultado_agrupado_fogo = processar_mapa_fogo_agrupado(mapa_fogo, tamanho)
-    print("Agrupamento de intensidades de fogo (valor aproximado: {intensidades originais, coordenadas}):")
+    print(
+        "Agrupamento de intensidades de fogo (valor aproximado: {intensidades originais, coordenadas}):"
+    )
     return resultado_agrupado_fogo
 
-resultados_simulacao = simular(15)
+
+resultados_simulacao = simular()
 answer = menu()
